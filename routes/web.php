@@ -3,10 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\QRController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use Ozdemir\Datatables\Datatables;
@@ -68,6 +72,36 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/students/{id}/update', [AdminController::class, 'updateStudent'])->name('admin.students.update');
     Route::delete('/admin/students/{id}', [AdminController::class, 'deleteStudent'])->name('admin.students.delete');
 
+    // Classroom Management
+    Route::get('/admin/classrooms', [ClassroomController::class, 'index'])->name('admin.classrooms.index');
+    Route::get('/admin/classrooms/data', [ClassroomController::class, 'data'])->name('admin.classrooms.data');
+    Route::get('/admin/classrooms/create', [ClassroomController::class, 'create'])->name('admin.classrooms.create');
+    Route::post('/admin/classrooms', [ClassroomController::class, 'store'])->name('admin.classrooms.store');
+    Route::get('/admin/classrooms/{id}', [ClassroomController::class, 'show'])->name('admin.classrooms.show');
+    Route::get('/admin/classrooms/{id}/edit', [ClassroomController::class, 'edit'])->name('admin.classrooms.edit');
+    Route::put('/admin/classrooms/{id}', [ClassroomController::class, 'update'])->name('admin.classrooms.update');
+    Route::delete('/admin/classrooms/{id}', [ClassroomController::class, 'destroy'])->name('admin.classrooms.destroy');
+
+    // Role Management
+    Route::get('/admin/roles', [RoleController::class, 'index'])->name('admin.roles.index');
+    Route::get('/admin/roles/data', [RoleController::class, 'data'])->name('admin.roles.data');
+    Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('admin.roles.create');
+    Route::post('/admin/roles', [RoleController::class, 'store'])->name('admin.roles.store');
+    Route::get('/admin/roles/{id}', [RoleController::class, 'show'])->name('admin.roles.show');
+    Route::get('/admin/roles/{id}/edit', [RoleController::class, 'edit'])->name('admin.roles.edit');
+    Route::put('/admin/roles/{id}', [RoleController::class, 'update'])->name('admin.roles.update');
+    Route::delete('/admin/roles/{id}', [RoleController::class, 'destroy'])->name('admin.roles.destroy');
+
+    // User Management
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/admin/users/data', [UserController::class, 'data'])->name('admin.users.data');
+    Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('/admin/users/{id}', [UserController::class, 'show'])->name('admin.users.show');
+    Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
     //excel
     Route::get('/admin/attendances/export', [App\Http\Controllers\AdminController::class, 'exportAttendances'])
     ->name('admin.attendances.export');
@@ -101,6 +135,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reset-password', [NewPasswordController::class, 'store'])
         ->middleware('guest')
         ->name('password.store');
+
+    // Settings routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update.profile');
+        Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update.password');
+        Route::delete('/settings/account', [SettingsController::class, 'deleteAccount'])->name('settings.delete.account');
+    });
 
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])

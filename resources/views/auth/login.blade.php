@@ -88,13 +88,13 @@
                     </button>
                 </form>
 
-                <!-- Sign Up Link -->
+                <!-- Sign Up Link 
                 <p class="mt-8 text-center text-sm text-slate-600">
                     Don't have an account? 
                     <a href="{{ route('register') }}" class="text-blue-900 font-semibold hover:text-blue-700 transition-colors">
                         Sign up now
                     </a>
-                </p>
+                </p>-->
             </div>
         </div>
     </div>
