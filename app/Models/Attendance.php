@@ -16,11 +16,15 @@ class Attendance extends Model
         'user_id',
         'date',
         'time',
+        'check_in_time',
         'status',
         'method',
         'qr_code',
         'notes',
         'photo',
+        'latitude',
+        'longitude',
+        'location',
     ];
     
 

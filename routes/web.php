@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GuruController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -38,6 +39,7 @@ Route::get('/public', [AttendanceController::class, 'publicscreen'])->name('publ
 // Route untuk student (siswa)
 Route::middleware(['auth'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
 
     // Contoh route tambahan
     Route::get('/attendance/qr', [AttendanceController::class, 'scanQr'])->name('student.attendance.qr');
@@ -55,10 +57,16 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    // 🔹 EXPORT ROUTES (harus sebelum parameter routes untuk menghindari route conflict)
+    Route::get('/admin/attendances/export', [AdminController::class, 'exportAttendances'])->name('admin.attendances.export');
+    Route::get('/admin/classrooms/export', [AdminController::class, 'exportClassrooms'])->name('admin.classrooms.export');
+    Route::get('/admin/roles/export', [AdminController::class, 'exportRoles'])->name('admin.roles.export');
+    Route::get('/admin/students/export', [AdminController::class, 'exportStudents'])->name('admin.students.export');
+    Route::get('/admin/users/export', [AdminController::class, 'exportUsers'])->name('admin.users.export');
+
     // Attendance DataTables
     Route::get('/admin/attendances', [AdminController::class, 'attendances'])->name('admin.attendances');
-    Route::get('/admin/attendances/data', [AdminController::class, 'attendancesData'])
-    ->name('admin.attendances.data');
+    Route::get('/admin/attendances/data', [AdminController::class, 'attendancesData'])->name('admin.attendances.data');
 
     // Student DataTables
     Route::get('/admin/students', [AdminController::class, 'students'])->name('admin.students');
@@ -101,13 +109,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
-
-    //excel
-    Route::get('/admin/attendances/export', [App\Http\Controllers\AdminController::class, 'exportAttendances'])
-    ->name('admin.attendances.export');
-
 });
 
+// Route untuk guru (teacher)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/guru/dashboard', [AdminController::class, 'guruDashboard'])->name('guru.dashboard');
+    
+    // Attendance for guru's class
+    Route::get('/guru/attendances', [AdminController::class, 'guruAttendances'])->name('guru.attendances');
+    Route::get('/guru/attendances/data', [AdminController::class, 'guruAttendancesData'])->name('guru.attendances.data');
+    Route::get('/guru/attendances/export', [AdminController::class, 'guruExportAttendances'])->name('guru.attendances.export');
+});
 
     //QR
     Route::middleware(['auth'])->group(function () {
@@ -148,3 +160,101 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->middleware('auth')
         ->name('logout');
+
+// Test Debug Route (Remove after debugging)
+Route::get('/test-attendances-data', function() {
+    $attendances = Attendance::select([
+        'attendances.id',
+        'users.name as student_name',
+        'classrooms.name as class_name',
+        'users.email',
+        'attendances.date',
+        'attendances.time',
+        'attendances.status',
+        'attendances.method',
+        'attendances.photo',
+        'attendances.notes',
+        'attendances.location',
+        'attendances.latitude',
+        'attendances.longitude',
+    ])
+    ->join('users', 'attendances.user_id', '=', 'users.id')
+    ->join('classrooms', 'users.class_id', '=', 'classrooms.id')
+    ->orderByDesc('attendances.date')
+    ->orderByDesc('attendances.time')
+    ->limit(5)
+    ->get();
+    
+    return response()->json([
+        'total' => $attendances->count(),
+        'data' => $attendances,
+    ]);
+});
+
+// Test export classes
+Route::get('/test-export/classrooms', function() {
+    try {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ClassroomsExport(),
+            'test_classrooms.xlsx'
+        );
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
+
+Route::get('/test-export/roles', function() {
+    try {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\RolesExport(),
+            'test_roles.xlsx'
+        );
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
+
+Route::get('/test-export/students', function() {
+    try {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\StudentsExport(),
+            'test_students.xlsx'
+        );
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
+
+Route::get('/test-export/users', function() {
+    try {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\UsersExport(),
+            'test_users.xlsx'
+        );
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
+
+Route::middleware(['auth','role:guru'])->group(function () {
+
+    Route::get('/guru/dashboard', [GuruController::class,'index'])
+        ->name('guru.dashboard');
+
+});

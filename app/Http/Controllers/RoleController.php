@@ -45,10 +45,9 @@ class RoleController extends Controller
                        class="px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 border border-blue-200 text-sm">View</a>
                     <a href="/admin/roles/'.$id.'/edit" 
                        class="px-3 py-2 bg-yellow-100 text-yellow-600 rounded-lg hover:bg-yellow-200 border border-yellow-200 text-sm">Edit</a>
-                    <form action="/admin/roles/'.$id.'" method="POST" onsubmit="return confirm(\'Yakin ingin menghapus?\')" class="inline">
+                    <form action="/admin/roles/'.$id.'" method="POST" class="inline delete-form">
                         '.csrf_field().method_field('DELETE').'
-                        <button type="submit" 
-                            class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 border border-red-200 text-sm">
+                        <button type="button" class="delete-btn px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 border border-red-200 text-sm">
                             Delete
                         </button>
                     </form>

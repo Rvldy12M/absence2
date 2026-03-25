@@ -89,7 +89,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-slate-700">User</p>
-                                        <p class="text-xs text-slate-500">Admin, Guru, Staf</p>
+                                        <p class="text-xs text-slate-500">Admin, Guru</p>
                                     </div>
                                 </a>
 
@@ -127,6 +127,22 @@
                                      : 'hover:bg-white/10' }}">
                             QR Code
                         </a>-->
+                    @elseif(Auth::user()->role === 'guru')
+                        <a href="{{ route('guru.dashboard') }}" 
+                        class="px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 
+                        {{ request()->routeIs('guru.dashboard') 
+                            ? 'bg-white/20 backdrop-blur-sm shadow-lg' 
+                            : 'hover:bg-white/10' }}">
+                            Dashboard
+                        </a>
+
+                        <a href="{{ route('guru.attendances') }}" 
+                        class="px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 
+                        {{ request()->routeIs('guru.attendances') 
+                            ? 'bg-white/20 backdrop-blur-sm shadow-lg' 
+                            : 'hover:bg-white/10' }}">
+                            Kehadiran
+                        </a>
                     @elseif(Auth::user()->role === 'student')
                         <a href="{{ route('attendance.index') }}" 
                            class="px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 
@@ -196,41 +212,58 @@
                     </a>
                     
                     <!-- Master Data Section -->
-                    <div class="border-t border-slate-700/50 my-2 pt-2">
-                        <p class="px-4 py-1 text-xs font-semibold text-slate-400 uppercase tracking-widest">Master Data</p>
-                        <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-blue-600/30 transition-colors duration-150 text-sm">
-                            <div class="w-6 h-6 rounded bg-blue-100/20 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                            </div>
-                            <span>Role</span>
-                        </a>
-                        <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-green-600/30 transition-colors duration-150 text-sm">
-                            <div class="w-6 h-6 rounded bg-green-100/20 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </div>
-                            <span>User</span>
-                        </a>
-                        <a href="{{ route('admin.classrooms.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-purple-600/30 transition-colors duration-150 text-sm">
-                            <div class="w-6 h-6 rounded bg-purple-100/20 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5.581m0 0H9m0 0h5.581M9 21m0 0H7.5M21 9l-3.06-3.06a2 2 0 00-2.83 0L6 9m12 0l-1.757-1.757a2 2 0 00-2.83 0L9 9m3 3l6 6" />
-                                </svg>
-                            </div>
-                            <span>Kelas</span>
-                        </a>
-                        <a href="{{ route('admin.students') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-amber-600/30 transition-colors duration-150 text-sm">
-                            <div class="w-6 h-6 rounded bg-amber-100/20 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                                </svg>
-                            </div>
-                            <span>Siswa</span>
-                        </a>
-                    </div>
+                        <div class="border-t border-slate-700/50 my-2 pt-2">
+                            <p class="px-4 py-1 text-xs font-semibold text-slate-400 uppercase tracking-widest">Master Data</p>
+                            
+                            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-blue-600/30 active:bg-blue-600/50 transition-all duration-300 ease-in-out text-sm group">
+                                <div class="w-6 h-6 rounded bg-blue-100/20 group-hover:bg-blue-100/30 flex items-center justify-center transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <span>Role</span>
+                            </a>
+
+                            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-green-600/30 active:bg-green-600/50 transition-all duration-300 ease-in-out text-sm group">
+                                <div class="w-6 h-6 rounded bg-green-100/20 group-hover:bg-green-100/30 flex items-center justify-center transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <span>User</span>
+                            </a>
+
+                            <a href="{{ route('admin.classrooms.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-purple-600/30 active:bg-purple-600/50 transition-all duration-300 ease-in-out text-sm group">
+                                <div class="w-6 h-6 rounded bg-purple-100/20 group-hover:bg-purple-100/30 flex items-center justify-center transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5.581m0 0H9m0 0h5.581M9 21m0 0H7.5M21 9l-3.06-3.06a2 2 0 00-2.83 0L6 9m12 0l-1.757-1.757a2 2 0 00-2.83 0L9 9m3 3l6 6" />
+                                    </svg>
+                                </div>
+                                <span>Kelas</span>
+                            </a>
+
+                            <a href="{{ route('admin.students') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-amber-600/30 active:bg-amber-600/50 transition-all duration-300 ease-in-out text-sm group">
+                                <div class="w-6 h-6 rounded bg-amber-100/20 group-hover:bg-amber-100/30 flex items-center justify-center transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                    </svg>
+                                </div>
+                                <span>Siswa</span>
+                            </a>
+                        </div>
+                @elseif(Auth::user()->role === 'guru')
+                    <a href="{{ route('guru.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-emerald-600/30 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 5h4" />
+                        </svg>
+                        <span class="font-semibold text-sm">Dashboard</span>
+                    </a>
+                    <a href="{{ route('guru.attendances') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-teal-600/30 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="font-semibold text-sm">Kehadiran Siswa</span>
+                    </a>
                 @elseif(Auth::user()->role === 'student')
                     <a href="{{ route('attendance.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-blue-600/30 transition-colors duration-150">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">

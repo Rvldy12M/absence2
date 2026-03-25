@@ -9,22 +9,28 @@
 <body>
 
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 p-4">
-    <div class="w-full max-w-md">
-        <!-- Card Container -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
-            <!-- Header Section -->
-            <div class="bg-gradient-to-r from-blue-900 to-slate-800 p-8 text-center">
-                <div class="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full mx-auto mb-4 flex items-center justify-center border border-white/20">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                </div>
-                <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-                <p class="text-blue-200 text-sm">Sign in to continue to your account</p>
-            </div>
+    <!-- Single Container -->
+    <div class="w-full max-w-4xl flex flex-col md:flex-row bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Left Side - Image -->
+        <div class="md:w-1/2">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Absensi System" class="w-full h-full object-cover">
+        </div>
 
-            <!-- Form Section -->
-            <div class="p-8">
+        <!-- Right Side - Login Form -->
+        <div class="md:w-1/2 p-8 flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <!-- Header Section -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-blue-900/10 backdrop-blur-md rounded-full mx-auto mb-4 flex items-center justify-center border border-blue-900/20">
+                        <svg class="w-10 h-10 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h2>
+                    <p class="text-slate-600 text-sm">Sign in to continue to your account</p>
+                </div>
+
+                <!-- Form Section -->
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
                     
@@ -87,14 +93,6 @@
                         Sign In
                     </button>
                 </form>
-
-                <!-- Sign Up Link 
-                <p class="mt-8 text-center text-sm text-slate-600">
-                    Don't have an account? 
-                    <a href="{{ route('register') }}" class="text-blue-900 font-semibold hover:text-blue-700 transition-colors">
-                        Sign up now
-                    </a>
-                </p>-->
             </div>
         </div>
     </div>

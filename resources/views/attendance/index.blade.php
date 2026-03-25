@@ -78,9 +78,10 @@
             @endif
 
             <!-- Form -->
-            <form action="{{ route('attendance.qr') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('attendance.qr') }}" method="POST" enctype="multipart/form-data" class="space-y-6" id="attendanceForm">
                 @csrf
-                <input type="hidden" name="qr_code" id="qr_code" value="{{ $qr_code }}">
+                <input type="hidden" name="latitude" id="latitude" value="">
+                <input type="hidden" name="longitude" id="longitude" value="">
 
                 <!-- Camera Video Feed -->
                 <div class="relative bg-slate-900 rounded-lg overflow-hidden shadow-lg border-2 border-slate-300">
@@ -97,27 +98,56 @@
                     </div>
                 </div>
 
+                <!-- Photo Preview Section -->
+                <div id="previewSection" class="hidden">
+                    <div class="relative bg-slate-900 rounded-lg overflow-hidden shadow-lg border-2 border-green-400">
+                        <img id="previewImage" src="" alt="Preview Foto" 
+                             class="w-full aspect-video object-cover h-[280px] sm:h-[320px] rounded-lg">
+                        <div class="absolute inset-0 pointer-events-none">
+                            <div class="absolute top-4 right-4 flex items-center space-x-2 bg-green-500/80 backdrop-blur-sm px-3 py-1 rounded-full border border-green-400">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-xs text-white font-semibold">Foto Berhasil Diambil</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Hidden Photo Input -->
                 <input type="file" id="photo" name="photo" accept="image/*" capture="camera" style="display:none;">
 
                 <!-- Action Buttons -->
-                <div class="grid grid-cols-2 gap-3">
+                <div id="buttonsCameraMode" class="grid grid-cols-2 gap-3">
                     <button type="button" 
                             onclick="takePhoto()"
-                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         Ambil Foto
                     </button>
+                </div>
+
+                <!-- Preview Mode Buttons -->
+                <div id="buttonsPreviewMode" class="hidden grid grid-cols-2 gap-3">
+                    <button type="button" 
+                            onclick="resetPhoto()"
+                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Ulangi Foto
+                    </button>
 
                     <button type="submit" 
-                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                            onclick="submitWithGeolocation(event)"
+                            class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        Kirim
+                        <span id="submitBtnText">Kirim Foto</span>
                     </button>
                 </div>
             </form>
@@ -129,7 +159,7 @@
                 </svg>
                 <div>
                     <h3 class="text-sm font-semibold text-blue-900">Cara Check In</h3>
-                    <p class="text-sm text-blue-700 mt-1">Tekan "Ambil Foto" untuk mengambil Fotomu, Lalu jangan lupa tekan "Kirim".</p>
+                    <p class="text-sm text-blue-700 mt-1">Tekan "Ambil Foto" untuk mengambil Fotomu, Lalu jangan lupa tekan "Kirim Foto".</p>
                 </div>
             </div>
         </div>
@@ -139,6 +169,11 @@
 <script>
     const video = document.getElementById('camera');
     const canvas = document.getElementById('canvas');
+    const cameraSection = document.querySelector('[id="camera"]').parentElement;
+    const previewSection = document.getElementById('previewSection');
+    const previewImage = document.getElementById('previewImage');
+    const buttonsCameraMode = document.getElementById('buttonsCameraMode');
+    const buttonsPreviewMode = document.getElementById('buttonsPreviewMode');
 
     // Akses kamera
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -156,7 +191,82 @@
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             document.getElementById('photo').files = dataTransfer.files;
+
+            // Convert canvas to image data URL for preview
+            const imageData = canvas.toDataURL('image/jpeg');
+            previewImage.src = imageData;
+
+            // Switch to preview mode
+            cameraSection.style.display = 'none';
+            previewSection.classList.remove('hidden');
+            buttonsCameraMode.classList.add('hidden');
+            buttonsPreviewMode.classList.remove('hidden');
         });
+    }
+
+    // Reset foto untuk retake
+    function resetPhoto() {
+        // Clear the file input
+        document.getElementById('photo').value = '';
+
+        // Switch back to camera mode
+        cameraSection.style.display = 'block';
+        previewSection.classList.add('hidden');
+        buttonsCameraMode.classList.remove('hidden');
+        buttonsPreviewMode.classList.add('hidden');
+    }
+
+    // Capture geolocation dan submit form
+    function submitWithGeolocation(event) {
+        event.preventDefault();
+        console.log('📍 Mulai capture geolocation...');
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    console.log('✅ Geolocation berhasil:', position);
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    console.log('📌 Lat:', position.coords.latitude, ', Lon:', position.coords.longitude);
+                    
+                    // Submit form setelah 500ms
+                    setTimeout(() => {
+                        document.getElementById('attendanceForm').submit();
+                    }, 500);
+                },
+                function(error) {
+                    console.error('❌ Geolocation error:', error);
+                    let errorMsg = 'Gagal mengambil lokasi';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = 'Izin lokasi ditolak';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = 'Lokasi tidak tersedia';
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = 'Permintaan lokasi timeout';
+                            break;
+                    }
+                    
+                    console.log('⚠️ ' + errorMsg + ' - Form tetap dikirim');
+                    
+                    // Tetap submit form meski geolocation gagal
+                    setTimeout(() => {
+                        document.getElementById('attendanceForm').submit();
+                    }, 500);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            console.error('Geolocation tidak tersedia di browser ini');
+            document.getElementById('attendanceForm').submit();
+        }
     }
 </script>
 

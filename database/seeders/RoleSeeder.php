@@ -23,10 +23,6 @@ class RoleSeeder extends Seeder
                 'description' => 'Guru/Pendidik di sekolah'
             ],
             [
-                'name' => 'staf',
-                'description' => 'Staf sekolah'
-            ],
-            [
                 'name' => 'student',
                 'description' => 'Siswa/Peserta didik'
             ],

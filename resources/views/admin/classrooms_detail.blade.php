@@ -52,12 +52,22 @@
                    class="w-full block text-center px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors">
                     Edit Kelas
                 </a>
-                <form action="{{ route('admin.classrooms.destroy', $classroom->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                <button type="button" onclick="document.getElementById('deleteClassroomModal').classList.remove('hidden')" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">Hapus Kelas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Classroom Modal -->
+    <div id="deleteClassroomModal" class="fixed inset-0 bg-black/40 z-40 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-5">
+            <h3 class="text-xl font-bold text-slate-900">Konfirmasi Hapus Kelas</h3>
+            <p class="mt-2 text-slate-600">Yakin ingin menghapus kelas ini? Semua relasi bisa terpengaruh.</p>
+            <div class="mt-5 flex justify-end gap-2">
+                <button type="button" onclick="document.getElementById('deleteClassroomModal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                <form action="{{ route('admin.classrooms.destroy', $classroom->id) }}" method="POST" class="inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
-                        Hapus Kelas
-                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
                 </form>
             </div>
         </div>

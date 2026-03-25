@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-slate-900">Tambah User Baru</h2>
-            <p class="text-slate-600 text-sm mt-1">Buat user baru dengan role admin, guru, atau staf</p>
+            <p class="text-slate-600 text-sm mt-1">Buat user baru dengan role admin, atau guru</p>
         </div>
 
         <!-- Error Messages -->

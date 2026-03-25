@@ -150,24 +150,32 @@
             </div>
 
             <!-- Delete Button (Optional - moved to right) -->
-            <form action="{{ route('admin.students.delete', $student->id) }}" 
-                  method="POST" 
-                  class="inline-block"
-                  onsubmit="return confirm('Are you sure you want to delete this student? This action cannot be undone.')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                    Delete
-                </button>
-            </form>
+            <button type="button" onclick="document.getElementById('deleteStudentModal').classList.remove('hidden')" class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Delete
+            </button>
         </div>
 
     </div>
 
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteStudentModal" class="fixed inset-0 bg-black/40 z-40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-5">
+        <h3 class="text-xl font-bold text-slate-900">Konfirmasi Hapus</h3>
+        <p class="mt-2 text-slate-600">Apakah kamu yakin ingin menghapus siswa ini? Aksi ini tidak bisa dibatalkan.</p>
+        <div class="mt-5 flex justify-end gap-2">
+            <button type="button" onclick="document.getElementById('deleteStudentModal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+            <form action="{{ route('admin.students.delete', $student->id) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 @endsection

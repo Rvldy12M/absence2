@@ -52,13 +52,22 @@
                    class="w-full block text-center px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors">
                     Edit Role
                 </a>
-                <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
-                        Hapus Role
-                    </button>
-                </form>
+                <button type="button" onclick="document.getElementById('deleteRoleModal').classList.remove('hidden')" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">Hapus Role</button>
+                
+                <div id="deleteRoleModal" class="fixed inset-0 bg-black/40 z-40 hidden flex items-center justify-center">
+                    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-5">
+                        <h3 class="text-xl font-bold text-slate-900">Konfirmasi Hapus Role</h3>
+                        <p class="mt-2 text-slate-600">Anda akan menghapus role ini. Semua pengguna dengan role ini akan kehilangan role.</p>
+                        <div class="mt-5 flex justify-end gap-2">
+                            <button type="button" onclick="document.getElementById('deleteRoleModal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                            <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -103,10 +112,17 @@
                                     {{ $user->created_at->format('d M Y H:i') }}
                                 </td>
                                 <td class="px-6 py-3 text-sm text-center">
-                                    <a href="{{ route('admin.students.show', $user->id) }}" 
-                                       class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition">
-                                        Lihat
-                                    </a>
+                                    @if($user->role === 'student')
+                                        <a href="{{ route('admin.students.show', $user->id) }}" 
+                                           class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition">
+                                            Lihat
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.users.show', $user->id) }}" 
+                                           class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition">
+                                            Lihat
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

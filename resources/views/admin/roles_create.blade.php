@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-slate-900">Tambah Role Baru</h2>
-            <p class="text-slate-600 text-sm mt-1">Buat role baru seperti admin, guru, staf, dll</p>
+            <p class="text-slate-600 text-sm mt-1">Buat role baru seperti admin, guru, dll</p>
         </div>
 
         <!-- Error Messages -->
@@ -45,7 +45,7 @@
                        id="name" 
                        name="name" 
                        value="{{ old('name') }}"
-                       placeholder="Contoh: admin, guru, staf, siswa, dll"
+                       placeholder="Contoh: admin, guru, siswa, dll"
                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                        required>
                 @error('name')

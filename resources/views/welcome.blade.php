@@ -42,13 +42,13 @@
                             @endif
                         @else
                             <a href="{{ route('login') }}" 
-                               class="px-5 py-2.5 rounded-lg text-white font-medium transition-all duration-200 hover:bg-white/10">
+                               class="px-5 py-2.5 rounded-lg bg-white text-blue-900 font-semibold transition-all duration-200 hover:bg-blue-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                 Login
                             </a>
-                                <a href="{{ route('publicscreen') }}" 
+                                <!--<a href="{{ route('publicscreen') }}" 
                                    class="px-5 py-2.5 rounded-lg bg-white text-blue-900 font-semibold transition-all duration-200 hover:bg-blue-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                     Kehadiran Hari ini
-                                </a>
+                                </a>-->
                         @endauth
                     @endif
                 </div>
@@ -144,10 +144,10 @@
                                 </a>
                             @endif
                         @else
-                            <a href="{{ route('publicscreen') }}" 
+                            <!--<a href="{{ route('publicscreen') }}" 
                                class="px-8 py-4 bg-white text-blue-900 font-bold rounded-lg shadow-2xl hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
                                 Kehadiran hari ni
-                            </a>
+                            </a>-->
                             <a href="{{ route('login') }}" 
                                class="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-bold rounded-lg border-2 border-white/30 hover:bg-white/20 transition-all duration-200">
                                 Sign In

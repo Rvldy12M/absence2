@@ -6,9 +6,6 @@
 <div class="max-w-6xl mx-auto py-8 px-6">
     <!-- Breadcrumb & Header -->
     <div class="mb-6">
-        <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            &larr; Kembali ke Daftar User
-        </a>
         <h1 class="text-3xl font-bold text-slate-900 mt-3">User: {{ $user->name }}</h1>
     </div>
 
@@ -89,19 +86,24 @@
                     Edit User
                 </a>
 
-                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
-                        Hapus User
-                    </button>
-                </form>
-
-                <a href="{{ route('admin.users.index') }}" 
-                   class="w-full block text-center px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition-colors">
-                    Kembali
-                </a>
+                <button type="button" onclick="document.getElementById('deleteUserModal').classList.remove('hidden')" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">Hapus User</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div id="deleteUserModal" class="fixed inset-0 bg-black/40 z-40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-5">
+        <h3 class="text-xl font-bold text-slate-900">Konfirmasi Hapus User</h3>
+        <p class="mt-2 text-slate-600">Yakin ingin menghapus user ini? Data akan hilang permanen.</p>
+        <div class="mt-5 flex justify-end gap-2">
+            <button type="button" onclick="document.getElementById('deleteUserModal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
+            </form>
         </div>
     </div>
 </div>

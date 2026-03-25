@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Classroom;
+use App\Helpers\GeolocationHelper;
 use Ozdemir\Datatables\Datatables;
 use Ozdemir\Datatables\DB\LaravelAdapter;
 use Illuminate\Support\Facades\DB;
@@ -19,14 +20,24 @@ class AttendanceController extends Controller
     public function index()
     {
         $attendances = Attendance::with('user')
-            ->where('user_id', Auth::id()) // hanya data siswa login
+            ->where('user_id', Auth::id())
+            ->orderBy('date', 'desc')
+            ->limit(5)
+            ->get();
+        $qr_code = 'QR-' . now()->format('Ymd');
+        return view('attendance.index', compact('attendances','qr_code'));
+    }
+
+    public function history()
+    {
+        $attendances = Attendance::with('user')
+            ->where('user_id', Auth::id())
             ->orderBy('date', 'desc')
             ->get();
-        $qr_code = $qr_code = 'QR-' . now()->format('Ymd');
-        return view('attendance.index', compact('attendances','qr_code'));
-        
+
+        return view('attendance.history', compact('attendances'));
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -82,6 +93,12 @@ class AttendanceController extends Controller
             $photoPath = $request->file('photo')->store('attendance_photos', 'public');
         }
 
+        // Dapatkan nama lokasi dari latitude & longitude
+        $location = null;
+        if ($request->latitude && $request->longitude) {
+            $location = GeolocationHelper::getLocationName($request->latitude, $request->longitude);
+        }
+
         // Simpan data absen
         Attendance::create([
             'user_id' => $user->id,
@@ -91,6 +108,9 @@ class AttendanceController extends Controller
             'method' => $request->has('qr_code') ? 'qr' : 'photo',
             'photo' => $photoPath,
             'qr_code' => $request->qr_code,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'location' => $location,
         ]);
 
         return back()->with('success', "Absen berhasil! Status kamu hari ini: $status");
@@ -108,6 +128,9 @@ public function storeByStudent(Request $request)
     $request->validate([
         'status' => 'required|in:Hadir,Sakit,Izin',
         'notes' => 'nullable|string|max:255',
+        'doctor_note' => 'required_if:status,Sakit|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ], [
+        'doctor_note.required_if' => 'Upload surat dokter dibutuhkan saat memilih status Sakit.',
     ]);
 
     $user = Auth::user();
@@ -131,6 +154,11 @@ public function storeByStudent(Request $request)
         return redirect()->back()->with('error', 'Kamu sudah absen hari ini!');
     }
 
+    $photoPath = null;
+    if ($status === 'Sakit' && $request->hasFile('doctor_note')) {
+        $photoPath = $request->file('doctor_note')->store('attendance_photos', 'public');
+    }
+
     Attendance::create([
         'user_id' => $user->id,
         'date' => $date,
@@ -138,7 +166,7 @@ public function storeByStudent(Request $request)
         'status' => $status,
         'method' => 'Form',
         'notes' => $request->notes,
-        'photo' => null,
+        'photo' => $photoPath,
     ]);
 
     return redirect()->back()->with('success', 'Absen berhasil disimpan!');

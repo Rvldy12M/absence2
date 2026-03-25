@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        \DB::statement("ALTER TABLE `users` MODIFY `role` ENUM('admin', 'guru', 'staf', 'student') NOT NULL DEFAULT 'student'");
+        \DB::statement("ALTER TABLE `users` MODIFY `role` ENUM('admin', 'guru', 'student') NOT NULL DEFAULT 'student'");
     }
 
     /**

@@ -8,6 +8,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\GeolocationHelper;
 
 class QRController extends Controller
 {
@@ -21,25 +22,14 @@ class QRController extends Controller
     {
         // 🔹 Validasi awal
         $request->validate([
-            'qr_code' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ]);
 
-        // 🔹 Tentukan mode absensi (foto / QR)
-        if ($request->hasFile('photo')) {
-            // Mode Foto
-            $photoPath = $request->file('photo')->store('attendance_photos', 'public');
-            $method = 'Photo';
-        } elseif ($request->filled('qr_code')) {
-            // Mode QR
-            if (!$this->isQrValidForToday($request->qr_code)) {
-                return back()->with('error', ' Silahkan Ambil Foto terlebih dahulu');
-            }
-            $photoPath = null;
-            $method = 'qr';
-        } else {
-            return back()->with('error', 'Harap Ambil Foto terlebih dahulu.');
-        }
+        // 🔹 Simpan foto
+        $photoPath = $request->file('photo')->store('attendance_photos', 'public');
+        $method = 'Photo';
 
         // 🔹 Data user & tanggal
         $user = Auth::user();
@@ -62,27 +52,26 @@ class QRController extends Controller
             $status = 'Telat';
         }
 
+        // Dapatkan nama lokasi dari latitude & longitude
+        $location = null;
+        if ($request->latitude && $request->longitude) {
+            $location = GeolocationHelper::getLocationName($request->latitude, $request->longitude);
+        }
+
         Attendance::create([
             'user_id' => $user->id,
             'date' => $today,
+            'check_in_time' => now()->format('H:i:s'),
             'time' => now()->format('H:i:s'),
             'status' => $status,
-            'qr_code' => $request->qr_code,
             'photo' => $photoPath, // simpan path file
-            'method' => $method
+            'method' => $method,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'location' => $location,
         ]);
 
         return redirect()->route('attendance.index')->with('success', 'Absensi berhasil dicatat');
-    }
-
-    // 🔹 Fungsi untuk validasi QR code sesuai tanggal hari ini
-    private function isQrValidForToday($qrCode)
-    {
-        if (empty($qrCode)) return false;
-
-        // Format QR valid: HADIR-YYYYMMDD
-        $todayCode = 'HADIR-' . date('Ymd');
-        return $qrCode === $todayCode;
     }
 
     // 🔹 Generate QR untuk admin

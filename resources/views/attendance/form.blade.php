@@ -49,7 +49,7 @@
             @endif
 
             <!-- Form -->
-            <form action="{{ route('attendance.submit') }}" method="POST" class="space-y-6">
+            <form action="{{ route('attendance.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
                 <!-- Status Selection -->
@@ -64,7 +64,7 @@
                             <span>Status Kehadiran <span class="text-red-500">*</span></span>
                         </div>
                     </label>
-                    <select name="status" 
+                    <select id="statusSelect" name="status" 
                             required
                             class="w-full px-5 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-900 focus:ring-4 focus:ring-blue-900/10 outline-none transition-all duration-200 text-slate-800 bg-white">
                         <option value="">-- Kehadiran --</option>
@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Notes/Reason -->
-                <div class="space-y-3">
+                <div id="notesContainer" class="space-y-3">
                     <label class="block text-sm font-bold text-slate-700 uppercase tracking-wide">
                         <div class="flex items-center space-x-2 mb-2">
                             <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center border border-purple-200">
@@ -85,10 +85,26 @@
                             <span>Catatan / Alasan</span>
                         </div>
                     </label>
-                    <textarea name="notes" 
+                    <textarea id="notesField" name="notes" 
                               rows="4"
                               placeholder="Masukkan alasan"
                               class="w-full px-5 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-900 focus:ring-4 focus:ring-blue-900/10 outline-none transition-all duration-200 text-slate-800 placeholder-slate-400 resize-none"></textarea>
+                </div>
+
+                <!-- Doctor Note Upload (Shown When 'Sakit') -->
+                <div id="doctorNoteContainer" class="space-y-3 hidden">
+                    <label class="block text-sm font-bold text-slate-700 uppercase tracking-wide">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center border border-red-200">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m4-8h2a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                                </svg>
+                            </div>
+                            <span>Upload Surat Dokter <span class="text-red-500">*</span></span>
+                        </div>
+                    </label>
+                    <input id="doctorNote" type="file" name="doctor_note" accept="application/pdf,image/*" class="w-full text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100" />
+                    <p class="text-xs text-slate-500">(PDF/JPG/PNG, max 5MB)</p>
                 </div>
 
                 <!-- Info Box -->
@@ -125,5 +141,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    const statusSelect = document.getElementById('statusSelect');
+    const notesContainer = document.getElementById('notesContainer');
+    const doctorNoteContainer = document.getElementById('doctorNoteContainer');
+    const notesField = document.getElementById('notesField');
+    const doctorNoteField = document.getElementById('doctorNote');
+
+    const toggleFields = () => {
+        const status = statusSelect.value;
+        const isSick = status === 'Sakit';
+
+        notesContainer.classList.toggle('hidden', isSick);
+        doctorNoteContainer.classList.toggle('hidden', !isSick);
+
+        notesField.required = !isSick;
+        doctorNoteField.required = isSick;
+    };
+
+    statusSelect.addEventListener('change', toggleFields);
+    // Initialize on page load (if the form is re-rendered with old input)
+    document.addEventListener('DOMContentLoaded', toggleFields);
+</script>
 
 @endsection

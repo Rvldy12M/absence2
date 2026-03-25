@@ -321,7 +321,7 @@
                             </table>
                         </div>
 
-                        <a href="{{ route('attendance.index') }}" 
+                        <a href="{{ route('attendance.history') }}" 
                            class="inline-block mt-4 px-4 py-2 bg-purple-100 text-purple-600 rounded-lg font-medium hover:bg-purple-200 transition-colors">
                             Lihat Semua Riwayat →
                         </a>
